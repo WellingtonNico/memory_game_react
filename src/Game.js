@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { DECKS } from './constants'
 import cover from './assets/back.png'
-import { Col, Row,Modal, Button } from 'react-bootstrap'
+import { Col, Row, Modal, Button } from 'react-bootstrap'
 
 
 function Game({ symbolIndex }) {
+  const milisecondsToRetry = 1000
   const deck = DECKS[symbolIndex]
   const [cardList, setCardList] = useState([])
-  const [playedGames, setPlayedGames] = useState(0)
   const [score, setScore] = useState(0)
   const [attemptsCounter, setAttemptsCounter] = useState(0)
   const [flipped1, setFlipped1] = useState(null)
   const [flipped2, setFlipped2] = useState(null)
   const [gameHasFinished, setGameHasFinished] = useState(false)
-
+  const [animationIndex, setAnimationIndex] = useState(null)
+  const [isAnimating, setIsAnimating] = useState(false)
 
 
   function shuffleArray(arr) {
@@ -28,6 +29,23 @@ function Game({ symbolIndex }) {
     return arr;
   }
 
+  const animateStartGame = async (incomingIndex) => {
+    if(incomingIndex==0){
+      setIsAnimating(true)
+    }
+    var index = incomingIndex
+    flipCard(index)
+    setTimeout(()=>{
+      index++
+      if(index<=cardList.length){
+        animateStartGame(index)
+      }else{
+        setIsAnimating(false)
+      }
+    },150)
+
+  }
+
   const buildCardList = () => {
     const newCardList = deck.map((src, index) => {
       return {
@@ -37,11 +55,12 @@ function Game({ symbolIndex }) {
         isDiscovered: false
       }
     })
-    setCardList(shuffleArray([...newCardList, ...newCardList]))
+    setCardList([...newCardList, ...newCardList])
+    setIsAnimating(true)
   }
 
   const checkGameHasFinished = () => {
-    if(cardList.length>0&&cardList.every(card=>card.isDiscovered)){
+    if (cardList.length > 0 && cardList.every(card => card.isDiscovered)) {
       setGameHasFinished(true)
     }
   }
@@ -55,6 +74,7 @@ function Game({ symbolIndex }) {
       }
     }))
   }
+
 
 
   const handleClick = (index) => {
@@ -90,7 +110,7 @@ function Game({ symbolIndex }) {
         setCardList(newCardList)
         setFlipped1(null)
         setFlipped2(null)
-      }, 1500);
+      }, milisecondsToRetry);
     }
 
   }
@@ -115,9 +135,18 @@ function Game({ symbolIndex }) {
     }
   }, [flipped1, flipped2])
 
-  useEffect(()=>{
+  useEffect(() => {
     checkGameHasFinished()
-  },[cardList])
+  }, [cardList])
+
+
+  useEffect(()=>{
+    if(isAnimating){
+      animateStartGame(0)
+    }else if(cardList.length>0){
+      setCardList(shuffleArray(cardList))
+    }
+  },[isAnimating])
 
   return (
     <>
@@ -146,7 +175,7 @@ function Game({ symbolIndex }) {
               disabled={card.isDiscovered || (flipped1 != null && flipped2 != null) || card.isFlipped}
             >
               <div
-                className={`carta_conteudo ${!card.isFlipped ? 'flipped' : ''}`}
+                className={`carta_conteudo ${!card.isFlipped || animationIndex == index ? 'flipped' : ''}`}
               >
                 <div className="carta_frente">
                   <img src={card.src} className='img-fluid zoom' />
@@ -167,12 +196,12 @@ function Game({ symbolIndex }) {
           <Modal.Title>Jogo da Memória</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <h3>Parabéns por terminar o jogo!!!</h3>
-            <br />
-            <b>Sua porcentagem de acerto:</b>
-            <p>
-              <h2>{(deck.length*100/attemptsCounter).toFixed(2)} %</h2>
-            </p>
+          <h3>Parabéns por terminar o jogo!!!</h3>
+          <br />
+          <b>Sua porcentagem de acerto:</b>
+          <p>
+            <h2>{(deck.length * 100 / attemptsCounter).toFixed(2)} %</h2>
+          </p>
         </Modal.Body>
         <Modal.Footer className='justify-content-center'>
           <Button variant='primary' onClick={resetGame}>
