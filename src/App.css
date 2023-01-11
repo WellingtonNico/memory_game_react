@@ -1,38 +1,75 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
   align-items: center;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.main-bg{
+  background: rgb(23, 23, 23);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.zoom {
+  transition: all .2s ease-in-out;
+  z-index: 1000 !important;
+}
+
+.zoom:hover {
+  transform: scale(1.05);
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.jogo_cartas{
+  margin-top: -4rem;
+  display: grid;
+  justify-content:center;
+  grid-template-columns: repeat(7,1fr);
+  min-width: 600px;
+  /* gap:.7rem; */
+}
+
+
+.carta {
+  width: 80%;
+  aspect-ratio: 3/4.3;
+  padding: 0;
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.carta img {
+  border-radius: 7.6px;
+  aspect-ratio: 3/4.3;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.carta_conteudo {
+  position: relative;
+  width: 100%;
+  transition: all .2s ease;
+  transform-style:preserve-3d;
+}
+
+
+.carta_frente,
+.carta_costas {
+  position:absolute;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.carta_costas{
+  transform: rotateY(180deg);
+}
+
+
+.carta_conteudo.flipped{
+  transform: rotateY(180deg);
 }
