@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { DECKS } from './constants'
-import cover from './assets/back.png'
 import { Col, Row, Modal, Button } from 'react-bootstrap'
+import Carta from './Carta'
 
 
 function Game({ symbolIndex }) {
@@ -13,7 +13,6 @@ function Game({ symbolIndex }) {
   const [flipped1, setFlipped1] = useState(null)
   const [flipped2, setFlipped2] = useState(null)
   const [gameHasFinished, setGameHasFinished] = useState(false)
-  const [animationIndex, setAnimationIndex] = useState(null)
   const [isAnimating, setIsAnimating] = useState(false)
 
 
@@ -168,25 +167,13 @@ function Game({ symbolIndex }) {
         </Col>
         <div className='jogo_cartas' >
           {cardList.map((card, index) =>
-            <button
+            <Carta
               key={index}
-              onClick={() => handleClick(index)}
-              className='carta my-2'
-              disabled={card.isDiscovered || (flipped1 != null && flipped2 != null) || card.isFlipped}
-            >
-              <div
-                className={`carta_conteudo ${!card.isFlipped || animationIndex == index ? 'flipped' : ''}`}
-              >
-                <div className="carta_frente">
-                  <img src={card.src} className='img-fluid zoom' />
-                </div>
-                <div className="carta_costas">
-                  <img src={cover} className='img-fluid zoom' />
-                </div>
-
-              </div>
-            </button>
-
+              index={index}
+              handleClick={handleClick}
+              card={card}
+              flippingDisabled={flipped1 != null && flipped2 != null}
+            />
           )}
         </div>
       </Row>
